@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ONIMIX Italy VFL Dashboard</title>
+<style>
+  :root {
+    --bg:#080d18;--card:#0f1724;--card2:#162030;--border:#1e2d45;
+    --accent:#00d4ff;--green:#00ff88;--red:#ff4055;--yellow:#ffd700;
+    --orange:#ff8c00;--purple:#a855f7;--text:#e2e8f0;--muted:#64748b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+  .header{background:linear-gradient(135deg,#080d18,#0c1a30);border-bottom:1px solid var(--accent);padding:14px 20px;display:flex;align-items:center;gap:12px}
+  .logo{font-size:20px;font-weight:900;letter-spacing:2px;background:linear-gradient(90deg,var(--accent),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .sub{font-size:11px;color:var(--muted);letter-spacing:1px}
+  .tabs{display:flex;gap:2px;padding:12px 20px 0;background:var(--card);border-bottom:1px solid var(--border);overflow-x:auto}
+  .tab{padding:9px 16px;border-radius:7px 7px 0 0;cursor:pointer;font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap;transition:all .2s}
+  .tab.active{background:var(--bg);color:var(--accent);border:1px solid var(--border);border-bottom:none}
+  .main{padding:16px 20px;max-width:1500px;margin:0 auto}
+  .panel{display:none}.panel.active{display:block}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px}
+  .card-title{font-size:12px;font-weight:700;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .day-slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-top:12px}
+  .day-slot{background:var(--card2);border:1px dashed var(--border);border-radius:8px;padding:10px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
+  .day-slot:hover{border-color:var(--accent)}
+  .day-slot.loaded{border-style:solid;border-color:var(--green);cursor:default}
+  .sname{font-size:11px;font-weight:700;color:var(--accent)}
+  .sinfo{font-size:10px;color:var(--muted);margin-top:3px}
+  .day-slot.loaded .sinfo{color:var(--green)}
+  .rm{position:absolute;top:3px;right:6px;color:var(--red);cursor:pointer;font-size:13px;display:none}
+  .day-slot.loaded .rm{display:block}
+  .btn{padding:9px 18px;border-radius:7px;border:none;cursor:pointer;font-size:12px;font-weight:700;transition:all .2s}
+  .btn-p{background:linear-gradient(135deg,var(--accent),#0099cc);color:#000}
+  .btn-g{background:linear-gradient(135deg,var(--green),#00aa55);color:#000}
+  .btn-p:hover,.btn-g:hover{transform:translateY(-1px)}
+  .btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
+  .badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700}
+  .bg{background:rgba(0,255,136,.12);color:var(--green);border:1px solid rgba(0,255,136,.25)}
+  .br{background:rgba(255,64,85,.12);color:var(--red);border:1px solid rgba(255,64,85,.25)}
+  .by{background:rgba(255,215,0,.12);color:var(--yellow);border:1px solid rgba(255,215,0,.25)}
+  .bb{background:rgba(0,212,255,.12);color:var(--accent);border:1px solid rgba(0,212,255,.25)}
+  .bm{background:rgba(100,116,139,.12);color:var(--muted);border:1px solid rgba(100,116,139,.25)}
+  .bo{background:rgba(255,140,0,.12);color:var(--orange);border:1px solid rgba(255,140,0,.25)}
+  .stat-box{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center}
+  .sv{font-size:26px;font-weight:900}.sl{font-size:10px;color:var(--muted);margin-top:3px;letter-spacing:.5px}
+  .blk{height:26px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#000;cursor:pointer;position:relative;min-width:22px;margin:2px;transition:transform .15s;vertical-align:middle}
+  .blk:hover{transform:scaleY(1.2);z-index:5}
+  .blk.H{background:linear-gradient(135deg,var(--green),#00aa55)}
+  .blk.A{background:linear-gradient(135deg,#4499ff,#2266cc)}
+  .blk.hot{background:linear-gradient(135deg,#ffdd00,#ff8800)!important}
+  .blk.cold{opacity:.5}
+  .tbl{width:100%;border-collapse:collapse;font-size:12px}
+  .tbl th{background:var(--card2);color:var(--muted);padding:7px 10px;text-align:left;font-size:10px;letter-spacing:.5px;border-bottom:1px solid var(--border)}
+  .tbl td{padding:7px 10px;border-bottom:1px solid rgba(30,45,69,.4)}
+  .tbl tr:hover td{background:rgba(0,212,255,.03)}
+  .pb{height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+  .pf{height:100%;border-radius:3px}
+  .al{padding:10px 14px;border-radius:7px;font-size:12px;margin-bottom:10px;line-height:1.5}
+  .ali{background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);color:var(--accent)}
+  .alw{background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.2);color:var(--yellow)}
+  .als{background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);color:var(--green)}
+  .ald{background:rgba(255,64,85,.08);border:1px solid rgba(255,64,85,.2);color:var(--red)}
+  select{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 10px;font-size:12px;outline:none}
+  select:focus{border-color:var(--accent)}
+  .sx{overflow-x:auto}
+  ::-webkit-scrollbar{width:5px;height:5px}
+  ::-webkit-scrollbar-track{background:var(--card2)}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+  .tt{display:none;position:absolute;bottom:110%;left:50%;transform:translateX(-50%);background:#000;border:1px solid var(--accent);color:var(--text);font-size:10px;padding:5px 8px;border-radius:5px;white-space:nowrap;z-index:50;pointer-events:none}
+  .blk:hover .tt{display:block}
+  .shdr{font-size:12px;font-weight:700;color:var(--text);letter-spacing:.5px;margin:14px 0 8px;display:flex;align-items:center;gap:8px}
+  .shdr::after{content:'';flex:1;height:1px;background:var(--border)}
+  @media(max-width:700px){.g2,.g3,.g4{grid-template-columns:1fr}.main{padding:10px}}
+
+  /* PREDICTION CARD */
+  .pc{border-radius:9px;padding:12px;border:1px solid}
+  .pc-bet25{border-color:var(--green);background:rgba(0,255,136,.04)}
+  .pc-bet15{border-color:var(--yellow);background:rgba(255,215,0,.04)}
+  .pc-watch{border-color:var(--orange);background:rgba(255,140,0,.04)}
+  .pc-skip{border-color:var(--red);background:rgba(255,64,85,.04);opacity:.8}
+  .pc-team{font-size:15px;font-weight:700}
+  .pc-role{font-size:11px;color:var(--muted);margin-top:2px}
+  .pc-time{font-size:10px;font-family:monospace;color:var(--accent);margin-top:1px}
+  .pc-conf{font-size:20px;font-weight:900}
+  .pc-label{font-size:9px;color:var(--muted)}
+  .pc-signals{font-size:10px;color:var(--muted);line-height:1.5;margin:6px 0}
+  .pc-history{border-top:1px solid var(--border);padding-top:6px;margin-top:6px}
+  .pc-hist-title{font-size:10px;color:var(--muted);margin-bottom:3px}
+  .pc-match{font-size:9px;font-family:monospace;white-space:nowrap;color:var(--muted)}
+
+  /* TIME GROUP */
+  .tg-header{background:linear-gradient(90deg,rgba(0,212,255,.1),transparent);border-left:3px solid var(--accent);padding:8px 12px;margin:14px 0 8px;border-radius:0 7px 7px 0}
+  .tg-time{font-size:16px;font-weight:700;color:var(--accent);font-family:monospace}
+  .tg-sub{font-size:11px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div><div class="logo">🇮🇹 ONIMIX ITALY</div><div class="sub">ITALY VFL · BLOCK INTELLIGENCE</div></div>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+    <span id="hdrS" style="font-size:11px;color:var(--muted)">No data</span>
+    <div style="width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)"></div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="sw('upload')">📁 Upload</div>
+  <div class="tab" onclick="sw('overview')">📊 Overview</div>
+  <div class="tab" onclick="sw('blocks')">🧱 Blocks</div>
+  <div class="tab" onclick="sw('transitions')">🔄 Transitions</div>
+  <div class="tab" onclick="sw('predict')">🎯 Predictions</div>
+  <div class="tab" onclick="sw('slots')">⏰ Slots</div>
+</div>
+
+<div class="main">
+
+<!-- UPLOAD -->
+<div id="panel-upload" class="panel active">
+  <div class="card">
+    <div class="card-title">📁 Load Day Files</div>
+    <div class="al ali">Upload one file per day (D11.txt, D12.txt…) or a combined file with <b>D13 / D14</b> headers. Format: <code style="color:var(--green)">HH:MM  HOME  H:A  AWAY</code> per line.</div>
+    <div class="day-slots" id="daySlots"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+      <label class="btn btn-p" style="cursor:pointer" for="fInp">＋ Add File(s)</label>
+      <input type="file" id="fInp" multiple accept=".txt,.csv" style="display:none" onchange="onFiles(this.files)">
+      <button class="btn btn-g" id="aBtn" onclick="runAnalysis()" disabled>⚡ Analyse All</button>
+      <button class="btn" style="background:var(--card2);border:1px solid var(--border)" onclick="clearAll()">🗑 Clear</button>
+    </div>
+  </div>
+  <div class="card" id="prevC" style="display:none">
+    <div class="card-title">✅ Loaded Days</div>
+    <div id="prevInner"></div>
+  </div>
+</div>
+
+<!-- OVERVIEW -->
+<div id="panel-overview" class="panel">
+  <div id="ovC"><div style="text-align:center;padding:60px;color:var(--muted)">Load and analyse first</div></div>
+</div>
+
+<!-- BLOCKS -->
+<div id="panel-blocks" class="panel">
+  <div class="card" style="margin-bottom:10px">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <select id="bDay" onchange="renderBlocks()"><option value="all">All Days</option></select>
+      <select id="bTeam" onchange="renderBlocks()"><option value="all">All Teams</option></select>
+      <select id="bRole" onchange="renderBlocks()">
+        <option value="all">Both Roles</option>
+        <option value="H">Home Only</option>
+        <option value="A">Away Only</option>
+      </select>
+      <span style="font-size:10px;color:var(--muted);margin-left:auto">🟢Home 🔵Away 🟡Hot(O2.5≥55%) ⬛Cold</span>
+    </div>
+  </div>
+  <div id="blkC"><div style="text-align:center;padding:60px;color:var(--muted)">Load and analyse first</div></div>
+</div>
+
+<!-- TRANSITIONS -->
+<div id="panel-transitions" class="panel">
+  <div id="trC"><div style="text-align:center;padding:60px;color:var(--muted)">Load at least 2 days</div></div>
+</div>
+
+<!-- PREDICTIONS -->
+<div id="panel-predict" class="panel">
+  <div class="card" style="margin-bottom:10px">
+    <div class="card-title">🎯 Next-Day Predictions</div>
+    <div class="al ali" style="margin-bottom:10px">
+      <b>How this works:</b> Select your last completed day. The system reads each team's final block, predicts whether they FLIP or STAY in the next day, estimates their time window, and tells you the <b>exact time + market to play</b>. HOME = team is at home. AWAY = team is playing away.
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <select id="pBase" onchange="renderPredictions()"><option value="">Choose base day…</option></select>
+      <select id="pConf" onchange="renderPredictions()">
+        <option value="0.65">Min 65% confidence</option>
+        <option value="0.70" selected>Min 70%</option>
+        <option value="0.75">Min 75%</option>
+        <option value="0.80">Min 80%</option>
+      </select>
+      <select id="pView" onchange="renderPredictions()">
+        <option value="timeline">⏰ Timeline (by time slot)</option>
+        <option value="cards">📋 By Verdict</option>
+      </select>
+    </div>
+  </div>
+  <div id="predC"><div style="text-align:center;padding:60px;color:var(--muted)">Select base day above</div></div>
+</div>
+
+<!-- SLOTS -->
+<div id="panel-slots" class="panel">
+  <div id="slotC"><div style="text-align:center;padding:60px;color:var(--muted)">Load and analyse first</div></div>
+</div>
+
+</div>
+
+<script>
+// ============ STATE ============
+let D = {days:{},dl:[],teams:[],trans:{},pending:{},ok:false};
+
+// ============ PARSE ============
+function parseMatches(txt) {
+  const out=[];
+  for (let ln of txt.split('\n')) {
+    ln=ln.trim();
+    if(!ln||ln.includes('===')||/^[Dd]ay?\s*\d/i.test(ln)) continue;
+    const p=ln.split(/\s+/);
+    if(p.length===4&&p[2].includes(':')) {
+      const [t,h,sc,a]=p, [hg,ag]=sc.split(':').map(Number);
+      if(!isNaN(hg)&&!isNaN(ag)) out.push({time:t,home:h,away:a,hg,ag,total:hg+ag});
+    }
+  }
+  return out;
+}
+
+function parseFile(txt, fallback) {
+  const blocks=[];
+  let cur=null, label=fallback;
+  for (let ln of txt.split('\n')) {
+    const tr=ln.trim();
+    const dm=tr.match(/^(?:={2,}\s*)?[Dd](?:ay)?\s*(\d+)/);
+    if(dm) {
+      if(cur&&cur.length) blocks.push({label,matches:cur});
+      label=`D${dm[1]}`; cur=[]; continue;
+    }
+    if(tr.includes('===')||!tr) continue;
+    const p=tr.split(/\s+/);
+    if(p.length===4&&p[2].includes(':')) {
+      const [t,h,sc,a]=p,[hg,ag]=sc.split(':').map(Number);
+      if(!isNaN(hg)&&!isNaN(ag)) { if(!cur)cur=[]; cur.push({time:t,home:h,away:a,hg,ag,total:hg+ag}); }
+    }
+  }
+  if(cur&&cur.length) blocks.push({label,matches:cur});
+  if(!blocks.length) return [{label:fallback,matches:parseMatches(txt)}];
+  return blocks;
+}
+
+function buildSched(matches) {
+  const s={};
+  for(const m of matches) {
+    if(!s[m.home])s[m.home]={};
+    if(!s[m.away])s[m.away]={};
+    s[m.home][m.time]={role:'H',opp:m.away,hg:m.hg,ag:m.ag,total:m.total};
+    s[m.away][m.time]={role:'A',opp:m.home,hg:m.ag,ag:m.hg,total:m.total};
+  }
+  return s;
+}
+
+function buildBlocks(sched,team,rounds) {
+  let cur=null,curT=[];
+  const blocks=[];
+  for(const t of rounds) {
+    if(!sched[team]?.[t]) continue;
+    const role=sched[team][t].role;
+    if(role!==cur) {
+      if(cur!==null) { const games=curT.map(tt=>sched[team][tt]); blocks.push(mkBlock(cur,curT,games)); }
+      cur=role; curT=[t];
+    } else curT.push(t);
+  }
+  if(cur!==null&&curT.length) { const games=curT.map(tt=>sched[team][tt]); blocks.push(mkBlock(cur,curT,games)); }
+  return blocks;
+}
+
+function mkBlock(role,times,games) {
+  const n=games.length;
+  const o15=games.filter(g=>g.total>1).length;
+  const o25=games.filter(g=>g.total>2).length;
+  const gf=games.reduce((s,g)=>s+g.hg,0);
+  const ga=games.reduce((s,g)=>s+g.ag,0);
+  const wins=games.filter(g=>g.hg>g.ag).length;
+  const draws=games.filter(g=>g.hg===g.ag).length;
+  const zeroes=games.filter(g=>g.total===0).length;
+  return {role,times,games,n,start:times[0],end:times[times.length-1],
+    o15r:o15/n,o25r:o25/n,gf,ga,avg:(gf+ga)/n,winr:wins/n,drawr:draws/n,zeror:zeroes/n};
+}
+
+function daySt(matches) {
+  const n=matches.length,o15=matches.filter(m=>m.total>1).length,
+    o25=matches.filter(m=>m.total>2).length,draws=matches.filter(m=>m.hg===m.ag).length,
+    z=matches.filter(m=>m.total===0).length,g=matches.reduce((s,m)=>s+m.total,0);
+  return {n,o15r:o15/n,o25r:o25/n,drawr:draws/n,zeror:z/n,avg:g/n};
+}
+
+// ============ FILE UPLOAD ============
+const MAXS=8;
+function initSlots() {
+  document.getElementById('daySlots').innerHTML='';
+  for(let i=1;i<=MAXS;i++) {
+    document.getElementById('daySlots').innerHTML+=`<div class="day-slot" id="ds${i}" onclick="tSlot(${i})">
+      <span class="rm" onclick="event.stopPropagation();rmSlot(${i})">✕</span>
+      <div class="sname" id="sn${i}">Day ${i}</div>
+      <div class="sinfo" id="si${i}">Click to load</div>
+    </div>`;
+  }
+}
+
+function tSlot(i) { if(D.pending[i])return; const inp=document.createElement('input'); inp.type='file'; inp.accept='.txt,.csv'; inp.onchange=e=>onFiles(e.target.files,i); inp.click(); }
+
+function onFiles(files,target) {
+  for(const file of files) {
+    const r=new FileReader();
+    r.onload=e=>{ const blocks=parseFile(e.target.result,null);
+      for(const block of blocks) {
+        const slot=target||nxtSlot(); if(!slot) break;
+        const label=block.label||`D${slot}`;
+        asgSlot(slot,label,block.matches);
+        if(target) break;
+      }
+    };
+    r.readAsText(file);
+  }
+}
+
+function nxtSlot() { for(let i=1;i<=MAXS;i++) if(!D.pending[i]) return i; return null; }
+
+function asgSlot(slot,label,matches) {
+  D.pending[slot]={label,matches};
+  document.getElementById(`ds${slot}`).className='day-slot loaded';
+  document.getElementById(`sn${slot}`).textContent=label;
+  document.getElementById(`si${slot}`).textContent=`${matches.length} matches`;
+  updBtns(); updPrev();
+}
+
+function rmSlot(i) {
+  delete D.pending[i];
+  document.getElementById(`ds${i}`).className='day-slot';
+  document.getElementById(`sn${i}`).textContent=`Day ${i}`;
+  document.getElementById(`si${i}`).textContent='Click to load';
+  updBtns(); updPrev();
+}
+
+function clearAll() {
+  D={days:{},dl:[],teams:[],trans:{},pending:{},ok:false};
+  initSlots(); updBtns();
+  document.getElementById('prevC').style.display='none';
+  ['ovC','blkC','trC','predC','slotC'].forEach(id=>{ document.getElementById(id).innerHTML='<div style="text-align:center;padding:60px;color:var(--muted)">Load and analyse first</div>'; });
+}
+
+function updBtns() {
+  const n=Object.keys(D.pending).length;
+  document.getElementById('aBtn').disabled=n===0;
+  document.getElementById('hdrS').textContent=n>0?`${n} day(s) loaded`:'No data';
+}
+
+function updPrev() {
+  const slots=Object.entries(D.pending).sort((a,b)=>+a[0]-+b[0]);
+  if(!slots.length){document.getElementById('prevC').style.display='none';return;}
+  document.getElementById('prevC').style.display='block';
+  document.getElementById('prevInner').innerHTML=slots.map(([,d])=>
+    `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+      <span class="badge bb">${d.label}</span>
+      <span style="font-size:12px;font-weight:600">${d.matches.length} matches</span>
+      <span style="font-size:11px;color:var(--muted)">${[...new Set(d.matches.map(m=>m.time))].length} rounds</span>
+      <span class="badge bg">✓ Ready</span>
+    </div>`).join('');
+}
+
+// ============ ANALYSIS ============
+function runAnalysis() {
+  const slots=Object.entries(D.pending).sort((a,b)=>+a[0]-+b[0]);
+  D.days={};D.dl=[];D.teams=[];D.trans={};
+  for(const[,d] of slots) {
+    const matches=d.matches;
+    const rounds=[...new Set(matches.map(m=>m.time))].sort();
+    const sched=buildSched(matches);
+    const teams=[...new Set(matches.flatMap(m=>[m.home,m.away]))].sort();
+    const tb={};
+    for(const t of teams) tb[t]=buildBlocks(sched,t,rounds);
+    D.days[d.label]={label:d.label,matches,rounds,sched,teams,tb,st:daySt(matches)};
+    D.dl.push(d.label);
+    if(!D.teams.length) D.teams=teams;
+  }
+
+  // Transitions
+  for(const team of D.teams) {
+    D.trans[team]=[];
+    for(let i=0;i<D.dl.length-1;i++) {
+      const prev=D.dl[i],next=D.dl[i+1];
+      const pb=D.days[prev]?.tb[team]||[], nb=D.days[next]?.tb[team]||[];
+      if(!pb.length||!nb.length) continue;
+      const pl=pb[pb.length-1],nf=nb[0];
+      D.trans[team].push({from:prev,to:next,
+        plRole:pl.role,plN:pl.n,plO15:pl.o15r,plO25:pl.o25r,plStart:pl.start,plEnd:pl.end,
+        nfRole:nf.role,nfN:nf.n,nfO15:nf.o15r,nfO25:nf.o25r,nfStart:nf.start,nfEnd:nf.end,
+        flipped:pl.role!==nf.role});
+    }
+  }
+
+  D.ok=true;
+  updFilters();
+  renderOverview();
+  renderBlocks();
+  renderTransitions();
+  renderSlots();
+  sw('overview');
+}
+
+function updFilters() {
+  const do2='<option value="all">All Days</option>'+D.dl.map(d=>`<option>${d}</option>`).join('');
+  const to2='<option value="all">All Teams</option>'+D.teams.map(t=>`<option>${t}</option>`).join('');
+  document.getElementById('bDay').innerHTML=do2;
+  document.getElementById('bTeam').innerHTML=to2;
+  const pd='<option value="">Choose base day…</option>'+D.dl.map(d=>`<option>${d}</option>`).join('');
+  document.getElementById('pBase').innerHTML=pd;
+  if(D.dl.length){document.getElementById('pBase').value=D.dl[D.dl.length-1];setTimeout(renderPredictions,100);}
+}
+
+// ============ OVERVIEW ============
+function renderOverview() {
+  if(!D.ok)return;
+  let html=`<div class="g${Math.min(D.dl.length,4)}" style="margin-bottom:14px">`;
+  for(const d of D.dl) {
+    const s=D.days[d].st;
+    html+=`<div class="stat-box">
+      <div style="font-size:11px;color:var(--accent);font-weight:700;letter-spacing:1px;margin-bottom:10px">${d}</div>
+      <div class="g2" style="gap:8px">
+        <div><div class="sv" style="color:var(--green)">${f(s.o15r)}</div><div class="sl">O1.5</div></div>
+        <div><div class="sv" style="color:var(--accent)">${f(s.o25r)}</div><div class="sl">O2.5</div></div>
+        <div><div class="sv" style="color:var(--yellow)">${f(s.drawr)}</div><div class="sl">Draw</div></div>
+        <div><div class="sv" style="color:var(--red)">${f(s.zeror)}</div><div class="sl">0:0</div></div>
+      </div>
+      <div style="margin-top:8px;font-size:10px;color:var(--muted)">Avg goals: <b style="color:var(--text)">${s.avg.toFixed(2)}</b></div>
+    </div>`;
+  }
+  html+='</div>';
+
+  // Team ratings
+  const tr=D.teams.map(team=>{
+    let all=[];
+    for(const d of D.dl) for(const b of(D.days[d].tb[team]||[])) all=all.concat(b.games);
+    const n=all.length; if(!n)return null;
+    return {team,n,o15:all.filter(g=>g.total>1).length/n,o25:all.filter(g=>g.total>2).length/n,
+      dr:all.filter(g=>g.hg===g.ag).length/n,zr:all.filter(g=>g.total===0).length/n,
+      avg:all.reduce((s,g)=>s+g.total,0)/n};
+  }).filter(Boolean).sort((a,b)=>b.o25-a.o25);
+
+  html+=`<div class="card"><div class="card-title">🏆 Team Ratings</div><div class="sx"><table class="tbl"><thead><tr>
+    <th>Team</th><th>O1.5</th><th>O2.5</th><th>Draw</th><th>0:0</th><th>Avg</th><th>Tier</th>
+  </tr></thead><tbody>`;
+  for(const t of tr) {
+    const tier=t.o25>=0.52?`<span class="badge bg">🔥 Elite</span>`:t.zr>=0.1?`<span class="badge br">🥶 Trap</span>`:t.o25>=0.38?`<span class="badge by">⚡ Solid</span>`:`<span class="badge bm">— Avg</span>`;
+    html+=`<tr><td style="font-weight:700">${t.team}</td>
+      <td>${pc(t.o15,'var(--green)')}</td>
+      <td>${pc(t.o25,t.o25>=0.5?'var(--green)':t.o25>=0.35?'var(--yellow)':'var(--red)')}</td>
+      <td>${pc(t.dr,'var(--yellow)')}</td>
+      <td>${pc(t.zr,t.zr>=0.1?'var(--red)':'var(--muted)')}</td>
+      <td style="font-weight:700">${t.avg.toFixed(2)}</td><td>${tier}</td></tr>`;
+  }
+  html+='</tbody></table></div></div>';
+
+  // Block bible
+  const ba={};
+  for(const team of D.teams) for(const d of D.dl) for(const b of(D.days[d].tb[team]||[])) {
+    const k=`${b.role}${b.n}`;
+    if(!ba[k]) ba[k]={o15:0,o25:0,g:0};
+    ba[k].o15+=b.o15r*b.n; ba[k].o25+=b.o25r*b.n; ba[k].g+=b.n;
+  }
+  const bs=Object.entries(ba).filter(([,v])=>v.g>=6).sort((a,b)=>b[1].o25/b[1].g-a[1].o25/a[1].g);
+  html+=`<div class="card"><div class="card-title">📖 Block Pattern Bible</div><div class="g2">`;
+  for(const role of ['H','A']) {
+    html+=`<div><div style="font-size:11px;color:${role==='H'?'var(--green)':'#4499ff'};font-weight:700;margin-bottom:8px">${role==='H'?'🟢 HOME':'🔵 AWAY'} BLOCKS</div>`;
+    for(const[k,v] of bs.filter(([k])=>k.startsWith(role))) {
+      const o15r=v.o15/v.g,o25r=v.o25/v.g;
+      html+=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+        <span style="width:26px;font-weight:700;font-size:11px;color:${role==='H'?'var(--green)':'#4499ff'}">${k}</span>
+        <div style="flex:1"><div style="font-size:10px;color:var(--muted)">O1.5:${f(o15r)} O2.5:${f(o25r)} | ${v.g}g</div>
+        <div class="pb" style="margin-top:2px"><div class="pf" style="width:${o25r*100}%;background:${o25r>=0.5?'var(--green)':o25r>=0.35?'var(--yellow)':'var(--red)'}"></div></div></div>
+      </div>`;
+    }
+    html+='</div>';
+  }
+  html+='</div></div>';
+  document.getElementById('ovC').innerHTML=html;
+}
+
+// ============ BLOCKS ============
+function renderBlocks() {
+  if(!D.ok)return;
+  const dF=document.getElementById('bDay').value;
+  const tF=document.getElementById('bTeam').value;
+  const rF=document.getElementById('bRole').value;
+  const days=dF==='all'?D.dl:[dF];
+  const teams=tF==='all'?D.teams:[tF];
+  let html='';
+  for(const team of teams) {
+    html+=`<div class="card"><div class="card-title">⚽ ${team}</div>`;
+    for(const d of days) {
+      const blocks=(D.days[d].tb[team]||[]).filter(b=>rF==='all'||b.role===rF);
+      if(!blocks.length) continue;
+      html+=`<div style="margin-bottom:14px"><div style="font-size:11px;color:var(--accent);font-weight:700;margin-bottom:5px">${d}</div><div>`;
+      for(const b of blocks) {
+        const hot=b.o25r>=0.55,cold=b.o25r<0.25&&b.n>=3;
+        const w=Math.max(26,b.n*22);
+        html+=`<div class="blk ${b.role}${hot?' hot':''}${cold?' cold':''}" style="width:${w}px">
+          ${b.role}${b.n}
+          <div class="tt">${b.role==='H'?'HOME':'AWAY'} ${b.n}g | ${b.start}→${b.end}<br>O1.5:${f(b.o15r)} O2.5:${f(b.o25r)}<br>GF:${b.gf} GA:${b.ga}</div>
+        </div>`;
+      }
+      html+=`</div><div style="margin-top:5px;display:flex;gap:4px;flex-wrap:wrap">`;
+      for(const b of blocks) {
+        for(let i=0;i<b.games.length;i++) {
+          const g=b.games[i],c=g.total>2?'var(--green)':g.total>1?'var(--yellow)':'var(--red)';
+          html+=`<span style="font-size:10px;color:var(--muted);white-space:nowrap">
+            <span style="color:var(--accent);font-family:monospace">${b.times[i]}</span>
+            <span style="color:${b.role==='H'?'var(--green)':'#4499ff'};font-weight:700"> ${b.role==='H'?'H':'A'} ${g.opp}</span>
+            <span style="color:${c};font-weight:700"> ${g.hg}:${g.ag}</span>
+          </span>`;
+        }
+      }
+      const tG=blocks.reduce((s,b)=>s+b.n,0);
+      const aO15=blocks.reduce((s,b)=>s+b.o15r*b.n,0)/tG;
+      const aO25=blocks.reduce((s,b)=>s+b.o25r*b.n,0)/tG;
+      html+=`</div><div style="font-size:11px;color:var(--muted);margin-top:5px">${tG} games | O1.5:<b style="color:var(--green)"> ${f(aO15)}</b> | O2.5:<b style="color:var(--accent)"> ${f(aO25)}</b></div></div>`;
+    }
+    html+='</div>';
+  }
+  document.getElementById('blkC').innerHTML=html||'<div style="text-align:center;padding:40px;color:var(--muted)">No data matches filter</div>';
+}
+
+// ============ TRANSITIONS ============
+function renderTransitions() {
+  if(!D.ok||D.dl.length<2)return;
+  let flips=0,stays=0;
+  const bySz={};
+  for(const team of D.teams) for(const t of(D.trans[team]||[])) {
+    if(t.flipped)flips++;else stays++;
+    if(!bySz[t.plN])bySz[t.plN]={f:0,s:0};
+    if(t.flipped)bySz[t.plN].f++;else bySz[t.plN].s++;
+  }
+  const tot=flips+stays;
+  let html=`<div class="g3" style="margin-bottom:14px">
+    <div class="stat-box"><div class="sv" style="color:var(--orange)">${flips}</div><div class="sl">Role Flips</div></div>
+    <div class="stat-box"><div class="sv" style="color:var(--muted)">${stays}</div><div class="sl">Role Stays</div></div>
+    <div class="stat-box"><div class="sv" style="color:var(--accent)">${f(tot?flips/tot:0)}</div><div class="sl">Flip Rate</div></div>
+  </div>`;
+  html+=`<div class="card"><div class="card-title">📐 Flip Rate by Last Block Size</div>`;
+  for(const sz of Object.keys(bySz).sort((a,b)=>+a-+b)) {
+    const d=bySz[sz],t=d.f+d.s,fr=d.f/t;
+    html+=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+      <span style="width:54px;font-size:11px;font-weight:700;color:var(--accent)">Size ${sz}</span>
+      <div style="flex:1"><div class="pb"><div class="pf" style="width:${fr*100}%;background:${fr>=0.65?'var(--orange)':fr>=0.45?'var(--yellow)':'var(--muted)'}"></div></div></div>
+      <span style="width:70px;font-size:12px;font-weight:700;color:${fr>=0.65?'var(--orange)':fr>=0.45?'var(--yellow)':'var(--muted)'}">${f(fr)} flip</span>
+      <span style="font-size:10px;color:var(--muted)">${d.f}/${t}</span>
+    </div>`;
+  }
+  html+='</div>';
+  html+=`<div class="card"><div class="card-title">🔄 Full Transition Log</div><div class="sx"><table class="tbl">
+  <thead><tr><th>Team</th><th>From→To</th><th>Last Block</th><th>Time</th><th>Flip?</th><th>Next First Block</th><th>Time</th><th>O1.5 ✓</th><th>O2.5 ✓</th></tr></thead><tbody>`;
+  for(const team of D.teams) for(const t of(D.trans[team]||[])) {
+    html+=`<tr>
+      <td style="font-weight:700">${team}</td>
+      <td><span class="badge bb">${t.from}→${t.to}</span></td>
+      <td><span style="color:${t.plRole==='H'?'var(--green)':'#4499ff'};font-weight:700">${t.plRole}${t.plN}</span></td>
+      <td style="font-family:monospace;font-size:10px;color:var(--muted)">${t.plStart}–${t.plEnd}</td>
+      <td>${t.flipped?'<span class="badge bo">🔀 FLIP</span>':'<span class="badge bm">→ STAY</span>'}</td>
+      <td><span style="color:${t.nfRole==='H'?'var(--green)':'#4499ff'};font-weight:700">${t.nfRole}${t.nfN}</span></td>
+      <td style="font-family:monospace;font-size:10px;color:var(--muted)">${t.nfStart}–${t.nfEnd}</td>
+      <td style="font-weight:700;color:${t.nfO15>=0.7?'var(--green)':'var(--yellow)'}">${f(t.nfO15)}</td>
+      <td style="font-weight:700;color:${t.nfO25>=0.5?'var(--green)':t.nfO25>=0.33?'var(--yellow)':'var(--red)'}">${f(t.nfO25)}</td>
+    </tr>`;
+  }
+  html+='</tbody></table></div></div>';
+  document.getElementById('trC').innerHTML=html;
+}
+
+// ============ PREDICTIONS ============
+function renderPredictions() {
+  if(!D.ok)return;
+  const base=document.getElementById('pBase').value;
+  const minC=parseFloat(document.getElementById('pConf').value);
+  const view=document.getElementById('pView').value;
+  if(!base||!D.days[base])return;
+
+  const bd=D.days[base];
+  const preds=[];
+
+  for(const team of D.teams) {
+    const blocks=bd.tb[team]||[];
+    if(!blocks.length)continue;
+    const lb=blocks[blocks.length-1];
+
+    // Flip probability
+    let fHits=0,fMiss=0;
+    for(const t2 of D.teams) for(const tr of(D.trans[t2]||[])) if(tr.plN===lb.n){if(tr.flipped)fHits++;else fMiss++;}
+    let tF=0,tS=0;
+    for(const tr of(D.trans[team]||[])) if(tr.plN===lb.n){if(tr.flipped)tF++;else tS++;}
+    let flipP=fHits+fMiss>0?fHits/(fHits+fMiss):0.5;
+    if(tF+tS>=2) flipP=(flipP+tF/(tF+tS))/2;
+
+    const predRole=flipP>=0.5?(lb.role==='H'?'A':'H'):lb.role;
+
+    // Historical rates in predicted role
+    let hO15=0,hO25=0,hN=0;
+    const roleWins=[];
+    for(const d of D.dl) for(const b of(D.days[d].tb[team]||[])) if(b.role===predRole) {
+      hO15+=b.o15r*b.n; hO25+=b.o25r*b.n; hN+=b.n;
+      roleWins.push({day:d,start:b.start,end:b.end,n:b.n,o15r:b.o15r,o25r:b.o25r});
+    }
+    const expO15=hN?hO15/hN:0.65;
+    const expO25=hN?hO25/hN:0.35;
+
+    // Predicted time window from most recent same-role block
+    let predStart='??:??',predEnd='??:??';
+    if(roleWins.length) { const lat=roleWins[roleWins.length-1]; predStart=lat.start; predEnd=lat.end; }
+
+    // Signals
+    const repair=lb.o15r<0.4&&lb.n>=3;
+    const cool=lb.o25r>=0.7&&lb.n>=5;
+    const trap=['FCA','MAI','KOE','SCF'].includes(team);
+    const elite=['SVW','VFB','LEV'].includes(team);
+
+    let conf=expO15;
+    if(repair) conf=Math.min(0.96,conf+0.08);
+    if(cool) conf=Math.max(0.1,conf-0.07);
+    if(trap) conf=Math.max(0.1,conf-0.1);
+    if(elite&&predRole==='H') conf=Math.min(0.97,conf+0.07);
+
+    const verdict=conf>=0.77?'BET_O25':conf>=0.68?'BET_O15':conf>=0.58?'WATCH':'SKIP';
+
+    // Last block match detail
+    const lbMatches=lb.games.map((g,i)=>({time:lb.times[i],opp:g.opp,role:lb.role,hg:g.hg,ag:g.ag,total:g.total}));
+
+    preds.push({team,lb,predRole,flipP,expO15,expO25,conf,verdict,predStart,predEnd,
+      repair,cool,trap,elite,lbMatches,roleWins});
+  }
+
+  preds.sort((a,b)=>{const o={BET_O25:0,BET_O15:1,WATCH:2,SKIP:3};return o[a.verdict]-o[b.verdict]||b.conf-a.conf;});
+  const bet25=preds.filter(p=>p.verdict==='BET_O25');
+  const bet15=preds.filter(p=>p.verdict==='BET_O15');
+  const watch=preds.filter(p=>p.verdict==='WATCH');
+  const skip=preds.filter(p=>p.verdict==='SKIP');
+
+  let html=`<div class="al als" style="margin-bottom:12px">
+    📅 Base: <b>${base}</b> → Next day prediction | 
+    🟢 O2.5: <b>${bet25.length}</b> | 🟡 O1.5: <b>${bet15.length}</b> | ⚠️ Watch: <b>${watch.length}</b> | ❌ Skip: <b>${skip.length}</b>
+  </div>`;
+
+  if(view==='timeline') html+=timelineView(preds,minC);
+  else html+=cardsView(bet25,bet15,watch,skip,minC);
+
+  // Accumulator
+  const accL=bet25.filter(p=>p.conf>=0.77&&p.expO25>=0.48).slice(0,6);
+  if(accL.length>=2) {
+    const cP25=accL.reduce((s,p)=>s*p.expO25,1);
+    const cP15=accL.reduce((s,p)=>s*p.expO15,1);
+    html+=`<div class="card" style="border-color:var(--green)"><div class="card-title">💰 Suggested Accumulator</div>
+    <div class="al alw" style="margin-bottom:10px">⚠️ Accumulator probability drops with each leg. Use your highest-confidence legs only.</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">`;
+    for(const p of accL) {
+      html+=`<div style="background:var(--card2);border:1px solid var(--green);border-radius:7px;padding:8px 12px">
+        <div style="font-size:12px;font-weight:700;color:var(--green)">${p.team}</div>
+        <div style="font-size:10px;color:var(--muted)">${p.predRole==='H'?'🏠 HOME':'✈️ AWAY'}</div>
+        <div style="font-size:10px;font-family:monospace;color:var(--accent)">${p.predStart}–${p.predEnd}</div>
+        <div style="font-size:11px;font-weight:700;color:var(--accent)">O2.5: ${f(p.expO25)}</div>
+      </div>`;
+    }
+    html+=`</div><div style="display:flex;gap:20px;flex-wrap:wrap">
+      <div><div style="font-size:11px;color:var(--muted)">O2.5 Combined</div><div style="font-size:22px;font-weight:900;color:var(--green)">${f(cP25)}</div></div>
+      <div><div style="font-size:11px;color:var(--muted)">O1.5 Combined</div><div style="font-size:22px;font-weight:900;color:var(--yellow)">${f(cP15)}</div></div>
+      <div><div style="font-size:11px;color:var(--muted)">Legs</div><div style="font-size:22px;font-weight:900;color:var(--accent)">${accL.length}</div></div>
+    </div></div>`;
+  }
+
+  document.getElementById('predC').innerHTML=html;
+}
+
+function timelineView(preds,minC) {
+  // Group by predicted start time
+  const byT={};
+  for(const p of preds) {
+    if(p.conf<minC&&p.verdict!=='SKIP') continue;
+    if(!byT[p.predStart]) byT[p.predStart]=[];
+    byT[p.predStart].push(p);
+  }
+  const times=Object.keys(byT).sort();
+  if(!times.length) return '<div style="text-align:center;padding:30px;color:var(--muted)">No predictions for current filter</div>';
+
+  let html=`<div class="card"><div class="card-title">⏰ Timeline — What to Bet at Each Time</div>
+  <div class="al ali" style="margin-bottom:14px">
+    Each block below = a predicted time window for the next day. When those times arrive, check the team's position (HOME or AWAY as shown) and play the market highlighted. 
+    The <b>time shown is the expected WINDOW</b> based on where this team played in that role across previous days.
+  </div>`;
+
+  for(const time of times) {
+    const entries=byT[time];
+    const betCount=entries.filter(p=>p.verdict.includes('BET')).length;
+    html+=`<div class="tg-header">
+      <div class="tg-time">⏱ ${time}</div>
+      <div class="tg-sub">${entries.length} team(s) predicted · ${betCount} bet signal(s)</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;margin-bottom:4px">`;
+
+    for(const p of entries.sort((a,b)=>ord(a)-ord(b))) {
+      const[borderC,emoji,label]=vStyle(p.verdict);
+      const sigs=[];
+      if(p.repair) sigs.push('🔁 Repair expected');
+      if(p.cool) sigs.push('⬇️ Cooldown risk');
+      if(p.trap) sigs.push('🥶 Trap team');
+      if(p.elite&&p.predRole==='H') sigs.push('🔥 Elite home scorer');
+      if(p.flipP>=0.6) sigs.push(`🔀 Flip likely (${f(p.flipP)})`);
+
+      html+=`<div style="background:var(--card2);border:1px solid ${borderC};border-radius:9px;padding:12px">
+        <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:7px">
+          <div>
+            <div style="font-size:15px;font-weight:700">${emoji} ${p.team}</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px">
+              Predicted: <span style="color:${p.predRole==='H'?'var(--green)':'#4499ff'};font-weight:700">${p.predRole==='H'?'🏠 HOME':'✈️ AWAY'}</span>
+            </div>
+            <div style="font-size:10px;font-family:monospace;color:var(--accent)">⏰ ${p.predStart} – ${p.predEnd}</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:20px;font-weight:900;color:${borderC}">${f(p.conf)}</div>
+            <div style="font-size:9px;color:var(--muted)">${label}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px">
+          <span class="badge ${p.expO15>=0.7?'bg':'by'}">O1.5 ${f(p.expO15)}</span>
+          <span class="badge ${p.expO25>=0.5?'bg':p.expO25>=0.35?'by':'br'}">O2.5 ${f(p.expO25)}</span>
+          <span class="badge bb">Flip ${f(p.flipP)}</span>
+        </div>
+        ${sigs.length?`<div style="font-size:10px;color:var(--muted);line-height:1.5;margin-bottom:7px">${sigs.join(' · ')}</div>`:''}
+        <div style="border-top:1px solid var(--border);padding-top:6px">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:3px">
+            LAST BLOCK: <span style="color:${p.lb.role==='H'?'var(--green)':'#4499ff'};font-weight:700">${p.lb.role}${p.lb.n}</span>
+            | ${p.lb.start}–${p.lb.end} | O2.5:<b style="color:${p.lb.o25r>=0.5?'var(--green)':'var(--yellow)'}"> ${f(p.lb.o25r)}</b>
+          </div>
+          <div style="display:flex;gap:3px;flex-wrap:wrap">
+            ${p.lbMatches.slice(-5).map(m=>`<span style="font-size:9px;font-family:monospace;white-space:nowrap;color:var(--muted)">
+              <span style="color:var(--accent)">${m.time}</span>
+              <span style="color:${m.role==='H'?'var(--green)':'#4499ff'};font-weight:700"> ${m.role==='H'?'H':'A'} ${m.opp}</span>
+              <span style="color:${m.total>2?'var(--green)':m.total>1?'var(--yellow)':'var(--red)'}"> ${m.hg}:${m.ag}</span>
+            </span>`).join('')}
+          </div>
+        </div>
+      </div>`;
+    }
+    html+='</div>';
+  }
+  html+='</div>';
+  return html;
+}
+
+function cardsView(b25,b15,watch,skip,minC) {
+  let html='';
+  if(b25.length) {
+    html+=`<div class="card"><div class="card-title">🟢 BET O2.5 — Strong Goal Signals</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px">`;
+    for(const p of b25) html+=bigCard(p); html+='</div></div>';
+  }
+  if(b15.length) {
+    html+=`<div class="card"><div class="card-title">🟡 BET O1.5 — Solid Signals</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px">`;
+    for(const p of b15) html+=bigCard(p); html+='</div></div>';
+  }
+  if(watch.filter(p=>p.conf>=minC).length) {
+    html+=`<div class="card"><div class="card-title">⚠️ WATCH — Borderline</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px">`;
+    for(const p of watch.filter(p=>p.conf>=minC)) html+=bigCard(p); html+='</div></div>';
+  }
+  html+=`<div class="card"><div class="card-title">❌ SKIP — Avoid</div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap">`;
+  for(const p of skip) html+=`<span class="badge br">❌ ${p.team} (${f(p.conf)})</span>`;
+  html+='</div></div>';
+  return html;
+}
+
+function bigCard(p) {
+  const[borderC,emoji,label]=vStyle(p.verdict);
+  const sigs=[];
+  if(p.repair) sigs.push('🔁 Repair cycle');
+  if(p.cool) sigs.push('⬇️ Cooldown');
+  if(p.trap) sigs.push('🥶 Trap team');
+  if(p.elite&&p.predRole==='H') sigs.push('🔥 Elite home');
+  if(p.flipP>=0.6) sigs.push('🔀 Flip likely');
+  return `<div style="background:var(--card2);border:1px solid ${borderC};border-radius:9px;padding:12px">
+    <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:7px">
+      <div>
+        <div style="font-size:15px;font-weight:700">${emoji} ${p.team}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">
+          Next: <span style="color:${p.predRole==='H'?'var(--green)':'#4499ff'};font-weight:700">${p.predRole==='H'?'🏠 HOME':'✈️ AWAY'}</span>
+        </div>
+        <div style="font-size:10px;font-family:monospace;color:var(--accent)">⏰ ${p.predStart}–${p.predEnd}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:20px;font-weight:900;color:${borderC}">${f(p.conf)}</div>
+        <div style="font-size:9px;color:var(--muted)">${label}</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px">
+      <span class="badge ${p.expO15>=0.7?'bg':'by'}">O1.5 ${f(p.expO15)}</span>
+      <span class="badge ${p.expO25>=0.5?'bg':p.expO25>=0.35?'by':'br'}">O2.5 ${f(p.expO25)}</span>
+      <span class="badge bb">Flip ${f(p.flipP)}</span>
+    </div>
+    <div style="font-size:10px;color:var(--muted);line-height:1.5;margin-bottom:6px">${sigs.join(' · ')||'No special signals'}</div>
+    <div style="border-top:1px solid var(--border);padding-top:6px">
+      <div style="font-size:10px;color:var(--muted);margin-bottom:3px">LAST BLOCK: <span style="color:${p.lb.role==='H'?'var(--green)':'#4499ff'};font-weight:700">${p.lb.role}${p.lb.n}</span> ${p.lb.start}–${p.lb.end} | O2.5:<b style="color:${p.lb.o25r>=0.5?'var(--green)':'var(--yellow)'}"> ${f(p.lb.o25r)}</b></div>
+      <div style="display:flex;gap:3px;flex-wrap:wrap">
+        ${p.lbMatches.slice(-4).map(m=>`<span style="font-size:9px;font-family:monospace;white-space:nowrap;color:var(--muted)">
+          <span style="color:var(--accent)">${m.time}</span>
+          <span style="color:${m.role==='H'?'var(--green)':'#4499ff'};font-weight:700"> ${m.role==='H'?'H':'A'} ${m.opp}</span>
+          <span style="color:${m.total>2?'var(--green)':m.total>1?'var(--yellow)':'var(--red)'}"> ${m.hg}:${m.ag}</span>
+        </span>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ============ SLOTS ============
+function renderSlots() {
+  if(!D.ok)return;
+  const sd={};
+  for(const d of D.dl) for(const m of D.days[d].matches) {
+    if(!sd[m.time]) sd[m.time]={o15:0,o25:0,draws:0,zeroes:0,n:0,goals:0};
+    const s=sd[m.time]; s.n++; s.goals+=m.total;
+    if(m.total>1)s.o15++; if(m.total>2)s.o25++; if(m.hg===m.ag)s.draws++; if(m.total===0)s.zeroes++;
+  }
+  const slots=Object.entries(sd).sort((a,b)=>a[0].localeCompare(b[0]));
+  let html=`<div class="card"><div class="card-title">⏰ Slot Heatmap</div>
+  <div style="display:flex;gap:2px;align-items:flex-end;height:70px;margin-bottom:4px">`;
+  for(const[t,s] of slots) {
+    const r=s.o25/s.n,h2=Math.max(6,r*66),c=r>=0.55?'var(--green)':r>=0.4?'var(--yellow)':'var(--red)';
+    html+=`<div title="${t}: O2.5=${f(r)}" style="flex:1;min-width:14px;height:${h2}px;border-radius:3px 3px 0 0;background:${c};opacity:.8;cursor:pointer" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.8"></div>`;
+  }
+  html+=`</div><div style="display:flex;gap:2px;margin-bottom:14px">`;
+  for(const[t] of slots) html+=`<div style="flex:1;min-width:14px;font-size:8px;color:var(--muted);writing-mode:vertical-rl;transform:rotate(180deg);height:36px;text-align:right">${t}</div>`;
+  html+=`</div><div class="sx"><table class="tbl"><thead><tr><th>Time</th><th>Matches</th><th>O1.5</th><th>O2.5</th><th>Draw</th><th>0:0</th><th>Avg</th><th>Signal</th></tr></thead><tbody>`;
+  for(const[t,s] of slots) {
+    const o15r=s.o15/s.n,o25r=s.o25/s.n,dr=s.draws/s.n,zr=s.zeroes/s.n,avg=s.goals/s.n;
+    const sig=o25r>=0.55?`<span class="badge bg">🔥 HOT</span>`:o25r>=0.40?`<span class="badge by">⚡ WARM</span>`:zr>=0.12?`<span class="badge br">🥶 COLD</span>`:`<span class="badge bm">— Neutral</span>`;
+    html+=`<tr>
+      <td style="font-weight:700;font-family:monospace;color:var(--accent)">${t}</td>
+      <td>${s.n}</td>
+      <td style="font-weight:700;color:${o15r>=0.75?'var(--green)':'var(--text)'}">${f(o15r)}</td>
+      <td style="font-weight:700;color:${o25r>=0.5?'var(--green)':o25r>=0.35?'var(--yellow)':'var(--red)'}">${f(o25r)}</td>
+      <td>${f(dr)}</td><td style="color:${zr>=0.1?'var(--red)':'var(--muted)'}">${f(zr)}</td>
+      <td>${avg.toFixed(2)}</td><td>${sig}</td>
+    </tr>`;
+  }
+  html+='</tbody></table></div></div>';
+  document.getElementById('slotC').innerHTML=html;
+}
+
+// ============ UTILS ============
+function f(v){return(v*100).toFixed(0)+'%'}
+function pc(v,c){return `<div style="display:flex;align-items:center;gap:5px"><div style="width:42px"><div class="pb"><div class="pf" style="width:${v*100}%;background:${c}"></div></div></div><span style="font-size:11px;font-weight:700;color:${c}">${f(v)}</span></div>`}
+function vStyle(v){return v==='BET_O25'?['var(--green)','✅','BET O2.5']:v==='BET_O15'?['var(--yellow)','🟡','BET O1.5']:v==='WATCH'?['var(--orange)','⚠️','WATCH']:['var(--red)','❌','SKIP']}
+function ord(p){return{BET_O25:0,BET_O15:1,WATCH:2,SKIP:3}[p.verdict]||3}
+
+function sw(name) {
+  const n=['upload','overview','blocks','transitions','predict','slots'];
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',n[i]===name));
+  document.querySelectorAll('.panel').forEach(el=>el.classList.remove('active'));
+  document.getElementById(`panel-${name}`).classList.add('active');
+}
+
+document.addEventListener('dragover',e=>e.preventDefault());
+document.addEventListener('drop',e=>{e.preventDefault();if(e.dataTransfer.files.length)onFiles(e.dataTransfer.files);});
+initSlots();
+
+// ============ EMBEDDED DATA AUTO-LOAD ============
+const LEAGUE_NAME = "Italy VFL";
+window.addEventListener('DOMContentLoaded', function() {
+  initSlots();
+  loadRemoteData();
+});
+
+async function loadRemoteData() {
+  const base = "https://onimix.github.io/onimix-vfl-engine/data/italy/";
+  const days = ["D10","D11","D12","D13","D14","D15","D16"];
+  for (const day of days) {
+    try {
+      const r = await fetch(base + day + ".txt");
+      if (!r.ok) continue;
+      const txt = await r.text();
+      const blocks = parseFile(txt, day);
+      for (const block of blocks) {
+        const slot = nxtSlot();
+        if (!slot) break;
+        asgSlot(slot, block.label || day, block.matches);
+      }
+    } catch(e) {}
+  }
+  if (Object.keys(D.pending).length > 0) {
+    document.getElementById('aBtn').disabled = false;
+    setTimeout(runAnalysis, 200);
+  }
+}
+
+</script>
+</body>
+</html>
