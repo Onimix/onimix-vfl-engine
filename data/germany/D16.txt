@@ -1,5 +1,5 @@
-D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
-==============================================
+D16 RESULTS  -  Germany VFL  -  (WAT)
+======================================================
 
 00:30  BMU   0:2  SCF
 00:30  FCA   0:2  LEV
@@ -10,7 +10,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 00:30  SGE   0:1  WOB
 00:30  SVW   4:3  BMG
 00:30  UNI   1:2  BVB
-
 01:24  BMG   2:0  KOE
 01:24  BMU   1:1  TSG
 01:24  HDH   1:2  MAI
@@ -20,7 +19,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 01:24  STP   0:1  BVB
 01:24  UNI   1:1  WOB
 01:24  VFB   1:1  LEV
-
 02:06  BMG   3:0  TSG
 02:06  BMU   2:0  SCF
 02:06  BVB   2:0  LEV
@@ -30,7 +28,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 02:06  SGE   0:4  MAI
 02:06  STP   1:1  KOE
 02:06  VFB   1:2  FCA
-
 02:48  BMG   2:1  SCF
 02:48  BMU   1:0  MAI
 02:48  BVB   4:4  FCA
@@ -40,7 +37,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 02:48  SGE   0:1  UNI
 02:48  STP   1:1  LEV
 02:48  VFB   0:1  SVW
-
 03:30  BMG   1:0  MAI
 03:30  BMU   1:1  UNI
 03:30  BVB   1:1  SVW
@@ -50,7 +46,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 03:30  SGE   2:2  HSV
 03:30  STP   1:1  TSG
 03:30  VFB   1:2  WOB
-
 04:12  BMG   1:1  UNI
 04:12  BMU   1:1  HSV
 04:12  BVB   1:1  WOB
@@ -60,7 +55,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 04:12  STP   1:1  FCA
 04:12  TSG   1:2  SCF
 04:12  VFB   1:1  HDH
-
 04:54  BMG   2:2  HSV
 04:54  BMU   2:0  RBL
 04:54  BVB   0:0  HDH
@@ -70,7 +64,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 04:54  STP   2:1  SCF
 04:54  TSG   0:2  MAI
 04:54  VFB   1:2  SGE
-
 05:36  BMG   3:1  RBL
 05:36  BVB   4:1  SGE
 05:36  FCA   1:1  WOB
@@ -80,7 +73,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 05:36  STP   2:0  SVW
 05:36  TSG   0:1  UNI
 05:36  VFB   4:1  BMU
-
 06:18  BMG   1:3  VFB
 06:18  BVB   2:3  BMU
 06:18  FCA   1:0  HDH
@@ -90,7 +82,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 06:18  STP   5:1  MAI
 06:18  SVW   1:2  WOB
 06:18  TSG   1:4  HSV
-
 07:00  BVB   1:1  BMG
 07:00  FCA   0:0  SGE
 07:00  KOE   0:2  VFB
@@ -100,7 +91,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 07:00  STP   1:0  WOB
 07:00  SVW   4:0  HDH
 07:00  TSG   0:3  RBL
-
 07:42  FCA   4:0  BMU
 07:42  KOE   0:1  BVB
 07:42  LEV   4:0  BMG
@@ -110,7 +100,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 07:42  SVW   0:0  SGE
 07:42  TSG   2:2  VFB
 07:42  WOB   3:2  HDH
-
 08:24  FCA   2:1  BMG
 08:24  LEV   2:2  KOE
 08:24  MAI   0:1  RBL
@@ -120,7 +109,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 08:24  TSG   0:4  BVB
 08:24  UNI   1:2  HSV
 08:24  WOB   1:1  SGE
-
 09:06  FCA   0:3  KOE
 09:06  HDH   0:1  SGE
 09:06  MAI   2:2  VFB
@@ -130,7 +118,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 09:06  TSG   3:0  LEV
 09:06  UNI   1:1  RBL
 09:06  WOB   1:2  BMU
-
 09:48  FCA   4:0  TSG
 09:48  HDH   3:1  BMU
 09:48  HSV   2:1  RBL
@@ -140,7 +127,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 09:48  SVW   0:0  KOE
 09:48  UNI   0:4  VFB
 09:48  WOB   4:1  BMG
-
 10:30  HDH   4:1  BMG
 10:30  HSV   2:1  VFB
 10:30  MAI   1:1  LEV
@@ -150,7 +136,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 10:30  SVW   1:0  TSG
 10:30  UNI   0:0  BVB
 10:30  WOB   0:0  KOE
-
 11:12  HDH   4:0  KOE
 11:12  HSV   0:1  BVB
 11:12  MAI   3:0  FCA
@@ -160,7 +145,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 11:12  SVW   1:2  SCF
 11:12  UNI   3:4  LEV
 11:12  WOB   1:2  TSG
-
 11:54  BMU   1:1  BMG
 11:54  HDH   0:0  TSG
 11:54  HSV   2:0  LEV
@@ -170,7 +154,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 11:54  STP   1:4  VFB
 11:54  UNI   0:0  FCA
 11:54  WOB   2:0  SCF
-
 12:36  BMU   2:1  KOE
 12:36  HDH   2:0  SCF
 12:36  HSV   2:0  FCA
@@ -180,7 +163,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 12:36  UNI   1:1  SVW
 12:36  VFB   0:0  BVB
 12:36  WOB   3:0  MAI
-
 13:18  BVB   1:2  STP
 13:18  FCA   2:0  RBL
 13:18  KOE   6:0  BMG
@@ -190,7 +172,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 13:18  SVW   1:1  HSV
 13:18  TSG   1:4  BMU
 13:18  WOB   0:2  UNI
-
 14:00  FCA   2:0  VFB
 14:00  KOE   0:1  STP
 14:00  LEV   1:1  BVB
@@ -200,7 +181,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 14:00  TSG   0:3  BMG
 14:00  UNI   1:2  HDH
 14:00  WOB   1:4  HSV
-
 14:42  FCA   0:1  BVB
 14:42  HDH   1:2  HSV
 14:42  LEV   2:1  STP
@@ -210,7 +190,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 14:42  TSG   4:3  KOE
 14:42  UNI   1:0  SGE
 14:42  WOB   2:2  RBL
-
 15:24  FCA   2:1  LEV
 15:24  HDH   1:3  RBL
 15:24  HSV   0:2  SGE
@@ -220,7 +199,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 15:24  TSG   1:2  STP
 15:24  UNI   3:2  BMU
 15:24  WOB   1:4  VFB
-
 16:06  FCA   2:0  STP
 16:06  HDH   0:3  VFB
 16:06  HSV   4:1  BMU
@@ -230,7 +208,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 16:06  SVW   1:1  LEV
 16:06  UNI   2:3  BMG
 16:06  WOB   0:0  BVB
-
 16:48  HDH   1:2  BVB
 16:48  HSV   3:1  BMG
 16:48  MAI   2:2  TSG
@@ -240,7 +217,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 16:48  SVW   1:2  FCA
 16:48  UNI   5:0  KOE
 16:48  WOB   0:0  LEV
-
 17:30  BMU   2:0  VFB
 17:30  HDH   1:1  LEV
 17:30  HSV   3:1  KOE
@@ -250,7 +226,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 17:30  SVW   3:2  STP
 17:30  UNI   3:0  TSG
 17:30  WOB   1:1  FCA
-
 18:12  BMU   2:3  BVB
 18:12  HDH   2:1  FCA
 18:12  HSV   2:1  TSG
@@ -260,7 +235,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 18:12  UNI   1:1  SCF
 18:12  VFB   1:3  BMG
 18:12  WOB   1:2  SVW
-
 18:54  BMG   2:0  BVB
 18:54  BMU   1:2  LEV
 18:54  HDH   0:0  SVW
@@ -270,7 +244,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 18:54  UNI   2:1  MAI
 18:54  VFB   1:2  KOE
 18:54  WOB   2:2  STP
-
 19:36  BMG   0:2  LEV
 19:36  BMU   2:0  FCA
 19:36  BVB   1:1  KOE
@@ -280,7 +253,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 19:36  SGE   4:2  SVW
 19:36  UNI   1:1  STP
 19:36  VFB   3:3  TSG
-
 20:18  BMG   0:0  FCA
 20:18  BMU   2:0  SVW
 20:18  BVB   3:2  TSG
@@ -290,7 +262,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 20:18  RBL   1:0  MAI
 20:18  SGE   0:2  WOB
 20:18  VFB   1:0  SCF
-
 21:00  BMG   0:0  SVW
 21:00  BMU   3:2  WOB
 21:00  BVB   4:0  SCF
@@ -300,7 +271,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 21:00  RBL   2:0  UNI
 21:00  SGE   3:1  HDH
 21:00  VFB   0:0  MAI
-
 21:42  BMG   0:2  WOB
 21:42  BMU   0:0  HDH
 21:42  BVB   1:0  MAI
@@ -310,7 +280,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 21:42  SGE   4:2  STP
 21:42  TSG   1:0  FCA
 21:42  VFB   3:3  UNI
-
 22:24  BMG   1:2  HDH
 22:24  BMU   0:3  SGE
 22:24  BVB   4:1  UNI
@@ -320,7 +289,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 22:24  RBL   1:5  STP
 22:24  TSG   2:0  SVW
 22:24  VFB   3:2  HSV
-
 23:06  BMG   0:0  SGE
 23:06  BMU   1:2  STP
 23:06  BVB   2:2  HSV
@@ -330,7 +298,6 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 23:06  SCF   1:2  SVW
 23:06  TSG   0:0  WOB
 23:06  VFB   0:1  RBL
-
 23:48  BMG   0:0  BMU
 23:48  BVB   2:1  RBL
 23:48  FCA   0:2  UNI
@@ -341,5 +308,5 @@ D16 RESULTS  -  Germany VFL  -  16 May 2026 (WAT)
 23:48  TSG   0:1  HDH
 23:48  VFB   2:0  STP
 
-==============================================
-Total: 306  |  Over 1.5: 233  |  Rate: 76%
+======================================================
+Total: 306  |  Over 1.5: 306  |  Rate: 100%
