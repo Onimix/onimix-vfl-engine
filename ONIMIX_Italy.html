@@ -889,6 +889,118 @@ async function loadRemoteData() {
   }
 }
 
+
+// ============ GITHUB AUTO-SAVE ============
+const GH_REPO = "Onimix/onimix-vfl-engine";
+const GH_BRANCH = "master";
+
+function getToken() { return localStorage.getItem('gh_pat') || ''; }
+function setToken(t) { localStorage.setItem('gh_pat', t); }
+
+// Settings button in header
+function injectGHButton() {
+  const hdr = document.querySelector('.header > div:last-child');
+  if (!hdr) return;
+  const btn = document.createElement('button');
+  btn.id = 'ghBtn';
+  btn.style.cssText = 'background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:11px;padding:4px 10px;cursor:pointer';
+  btn.onclick = promptToken;
+  hdr.insertBefore(btn, hdr.firstChild);
+  updateGHBtn();
+}
+
+function updateGHBtn() {
+  const btn = document.getElementById('ghBtn');
+  if (!btn) return;
+  btn.textContent = getToken() ? '🔗 GitHub ✓' : '🔗 Connect GitHub';
+  btn.style.color = getToken() ? 'var(--green)' : 'var(--muted)';
+}
+
+function promptToken() {
+  const cur = getToken();
+  const t = prompt('Enter your GitHub Personal Access Token (with repo scope).\nIt is stored only in your browser (localStorage).\n\nLeave blank to disconnect.', cur || '');
+  if (t === null) return;
+  if (t.trim() === '') { localStorage.removeItem('gh_pat'); }
+  else { setToken(t.trim()); }
+  updateGHBtn();
+}
+
+async function pushToGitHub(filename, content, league) {
+  const token = getToken();
+  if (!token) return;
+  const path = `data/${league}/${filename}`;
+  const url = `https://api.github.com/repos/${GH_REPO}/contents/${path}`;
+  const headers = {
+    'Authorization': `token ${token}`,
+    'Accept': 'application/vnd.github.v3+json',
+    'Content-Type': 'application/json'
+  };
+  // Check if file exists (need SHA to update)
+  let sha = null;
+  try {
+    const r = await fetch(url, { headers });
+    if (r.ok) { const d = await r.json(); sha = d.sha; }
+  } catch(e) {}
+
+  const body = { message: `upload: ${filename} (${league})`, branch: GH_BRANCH,
+    content: btoa(unescape(encodeURIComponent(content))) };
+  if (sha) body.sha = sha;
+
+  try {
+    const r = await fetch(url, { method:'PUT', headers, body: JSON.stringify(body) });
+    if (r.ok) {
+      showToast(`✅ ${filename} saved to GitHub`);
+    } else {
+      const e = await r.json();
+      showToast(`❌ GitHub error: ${e.message}`);
+    }
+  } catch(e) { showToast(`❌ Network error: ${e.message}`); }
+}
+
+function showToast(msg) {
+  let t = document.getElementById('gh-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'gh-toast';
+    t.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#0f1724;border:1px solid var(--accent);color:var(--text);padding:10px 16px;border-radius:8px;font-size:12px;z-index:999;transition:opacity .4s';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._to);
+  t._to = setTimeout(() => t.style.opacity = '0', 3500);
+}
+
+// Hook into file upload — intercept onFiles to capture raw text + filename
+const _origOnFiles = onFiles;
+window._pendingFiles = {};
+window.onFiles = function(files, target) {
+  for (const file of files) {
+    const r = new FileReader();
+    r.onload = e => {
+      const txt = e.target.result;
+      const blocks = parseFile(txt, null);
+      for (const block of blocks) {
+        const slot = target || nxtSlot();
+        if (!slot) break;
+        const label = block.label || `D${slot}`;
+        asgSlot(slot, label, block.matches);
+        // Auto-save: push raw txt to GitHub
+        if (getToken()) {
+          const fname = label.replace(/\s+/g,'') + '.txt';
+          pushToGitHub(fname, txt, LEAGUE_NAME.split(' ')[0].toLowerCase());
+        }
+        if (target) break;
+      }
+    };
+    r.readAsText(file);
+  }
+};
+
+window.addEventListener('DOMContentLoaded', function() {
+  injectGHButton();
+});
+
 </script>
 </body>
 </html>
