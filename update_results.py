@@ -100,6 +100,8 @@ def main():
         print("No data fetched - skipping commit")
         return
 
+    # Fix remote URL with token
+    fix_remote()
     # Git commit and push
     run(f"git -C {repo_dir} add data/", cwd=repo_dir)
     msg = f"auto: results {date_str}"
@@ -109,3 +111,10 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+# Fix remote URL to use token (called at start)
+def fix_remote():
+    import os
+    token = os.environ.get('GH_TOKEN', '')
+    if token:
+        run(f"git -C {repo_dir} remote set-url origin https://{token}@github.com/Onimix/onimix-vfl-engine.git")
